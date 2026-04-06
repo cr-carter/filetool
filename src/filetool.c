@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-    prog_args arguments = {0};
+    prog_args_t arguments = {0};
     getargs(argc, argv, &arguments);
 
     return 0;

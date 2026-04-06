@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-typedef struct prog_args_t
+typedef struct prog_args
 {
     char *filename;
     char *append;
@@ -12,6 +12,6 @@ typedef struct prog_args_t
     bool is_info;
     bool is_delete;
     bool is_help;
-} prog_args;
+} prog_args_t;
 
 #endif // COMMON_H

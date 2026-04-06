@@ -1,4 +1,5 @@
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -23,19 +24,15 @@ int getargs(int argc, char *argv[], prog_args *arguments)
         switch (opt)
         {
         case 'f':
-            arguments->is_filename = true;
             arguments->filename = optarg;
             break;
         case 'a':
-            arguments->is_append = true;
             arguments->append = optarg;
             break;
         case 's':
-            arguments->is_search = true;
             arguments->search = optarg;
             break;
         case 'r':
-            arguments->is_replace = true;
             arguments->replace = optarg;
             break;
         case 'i':

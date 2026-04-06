@@ -6,3 +6,6 @@ filetool
 
 #Ignore vscode files
 .vscode/
+
+#Ignore docs
+docs/

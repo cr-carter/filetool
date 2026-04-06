@@ -4,102 +4,64 @@
 
 #include "include/common.h"
 
-/* File scope flags, all default to 0*/
-static int f_filename = 0;
-static int f_append = 0;
-static int f_search = 0;
-static int f_replace = 0;
-static int f_info = 0;
-static int f_delete = 0;
-static int f_help = 0;
-
 int getargs(int argc, char *argv[], prog_args *arguments)
 {
+    int func_retval = 0;
     int opt;
 
-    while (1)
-    {
-        int option_index = 0;
-        static struct option long_options[] = {{"filename", required_argument, &f_filename, 'f'},
-                                               {"append", required_argument, &f_append, 'a'},
-                                               {"search", required_argument, &f_search, 's'},
-                                               {"replace", required_argument, &f_replace, 'r'},
-                                               {"info", no_argument, &f_info, 'i'},
-                                               {"delete", no_argument, &f_delete, 'd'},
-                                               {"help", no_argument, &f_help, 'h'},
-                                               {NULL, 0, NULL, 0}};
+    static struct option long_options[] = {
+        {"filename", required_argument, 0, 'f'}, {"append", required_argument, 0, 'a'},
+        {"search", required_argument, 0, 's'},   {"replace", required_argument, 0, 'r'},
+        {"info", no_argument, 0, 'i'},           {"delete", no_argument, 0, 'd'},
+        {"help", no_argument, 0, 'h'},           {0, 0, 0, 0}};
 
-        opt = getopt_long(argc, argv, "-:f:a:s:r:idh", long_options, &option_index);
+    while ((opt = getopt_long(argc, argv, "-:f:a:s:r:idh", long_options, NULL)) != -1)
+    {
         if (opt == -1)
             break;
 
         switch (opt)
         {
-        case 0:
-            printf("long option %s", long_options[option_index].name);
-            if (optarg)
-            {
-                printf(" with arg %s", optarg);
-            }
-            printf("\n");
-            break;
-        case 1:
-            printf("regular argument '%s'\n", optarg);
-            break;
         case 'f':
-            printf("Option f has arg: %s\n", optarg);
-            f_filename = 102;
+            arguments->is_filename = true;
+            arguments->filename = optarg;
             break;
         case 'a':
-            printf("Option a has arg: %s\n", optarg);
-            f_append = 97;
+            arguments->is_append = true;
+            arguments->append = optarg;
             break;
         case 's':
-            printf("Option s has arg: %s\n", optarg);
-            f_search = 115;
+            arguments->is_search = true;
+            arguments->search = optarg;
             break;
         case 'r':
-            printf("Option r has arg: %s\n", optarg);
-            f_replace = 114;
+            arguments->is_replace = true;
+            arguments->replace = optarg;
             break;
         case 'i':
-            printf("Option i was provided\n");
-            f_info = 105;
+            arguments->is_info = true;
             break;
         case 'd':
-            printf("Option d was provided\n");
-            f_delete = 100;
+            arguments->is_delete = true;
             break;
         case 'h':
-            printf("Option h was provided\n");
-            f_help = 104;
+            arguments->is_help = true;
             break;
         case '?':
-            printf("Unkown option: %c\n", optopt);
+            func_retval = -1;
             break;
-        case ':':
-            printf("Missing arg for %c\n", optopt);
-            break;
-        default:
-            printf("?? getopt returned character code 0%o ??\n", opt);
         }
     }
 
-    if (optind < argc)
-    {
-        printf("Non-option args: ");
-        while (optind < argc)
-        {
-            printf("%s ", argv[optind++]);
-        }
-        printf("\n");
-    }
+    printf("  filename: %s\n", arguments->filename);
+    printf("    append: %s\n", arguments->append);
+    printf("    search: %s\n", arguments->search);
+    printf("   replace: %s\n", arguments->replace);
+    printf("   is_info: %i\n", arguments->is_info);
+    printf(" is_delete: %i\n", arguments->is_delete);
+    printf("   is_help: %i\n", arguments->is_help);
 
-    printf("f_filename: %i\n", f_filename);
-    printf("  f_append: %i\n", f_append);
-    printf("  f_search: %i\n", f_search);
-    printf(" f_replace: %i\n", f_replace);
-    printf("    f_info: %i\n", f_info);
-    printf("  f_delete: %i\n", f_delete);
-    printf("    f_help: %i\n", f_help);
+    return func_retval;
 }
+
+/* End of file */

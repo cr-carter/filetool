@@ -1,3 +1,8 @@
+#ifndef COMMON_H
+#define COMMON_H
+
+#include <stdbool.h>
+
 typedef struct prog_args_t
 {
     char *filename;
@@ -12,3 +17,5 @@ typedef struct prog_args_t
     bool is_delete;
     bool is_help;
 } prog_args;
+
+#endif // COMMON_H

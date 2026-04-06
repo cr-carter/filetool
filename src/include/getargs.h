@@ -1,0 +1,1 @@
+int getargs(int argc, char *argv[]);

@@ -27,31 +27,28 @@ int get_usage(char *prog_name)
 
 int main(int argc, char *argv[])
 {
-    int retval = 0;
+    int retval = EXIT_SUCCESS;
     prog_args_t arguments = {0};
     getargs(argc, argv, &arguments);
 
     if (!arguments.filename && !arguments.is_help)
     {
-        printf("Must use either filename and help option.\n");
-        get_usage(argv[0]);
-        retval = 1;
+        fprintf(stderr, "Usage: %s [options]\n", argv[0]);
+        retval = EXIT_FAILURE;
         goto exit_prog;
     }
 
     if (arguments.filename && arguments.is_help)
     {
-        printf("Cannot use filename and help option together.\n");
-        get_usage(argv[0]);
-        retval = 1;
+        fprintf(stderr, "Usage: %s [options]\n", argv[0]);
+        retval = EXIT_FAILURE;
         goto exit_prog;
     }
 
     if (arguments.filename && !(arguments.append || arguments.search || arguments.is_delete || arguments.is_info))
     {
-        printf("Must use one of the following: --append, --search, --delete, --info.\n");
-        get_usage(argv[0]);
-        retval = 1;
+        fprintf(stderr, "Usage: %s [options]\n", argv[0]);
+        retval = EXIT_FAILURE;
         goto exit_prog;
     }
 
@@ -59,9 +56,8 @@ int main(int argc, char *argv[])
                                    arguments.is_delete + arguments.is_info !=
                                1))
     {
-        printf("Cannot use more than one of the following at once: --append, --search, --delete, --info.\n");
-        get_usage(argv[0]);
-        retval = 1;
+        fprintf(stderr, "Usage: %s [options]\n", argv[0]);
+        retval = EXIT_FAILURE;
         goto exit_prog;
     }
 
@@ -70,23 +66,31 @@ int main(int argc, char *argv[])
         file_search();
         if (arguments.replace)
         {
+            // FILE *file_fp = fopen(arguments.filename, "w");
             file_replace();
         }
     }
 
     if (arguments.append)
     {
+        // FILE *file_fp = fopen(arguments.filename, "a");
         file_append();
     }
 
     if (arguments.is_delete)
     {
-        file_delete();
-    }
+        int delete_failed = file_delete(arguments.filename);
+        if (delete_failed)
+        {
+            retval = 1;
+            goto exit_prog;
+        }
+        }
 
     if (arguments.is_info)
     {
-        file_info();
+
+        file_info(arguments.filename);
     }
 
     if (arguments.is_help)

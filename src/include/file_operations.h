@@ -7,8 +7,8 @@ int file_replace(void);
 
 int file_append(void);
 
-int file_delete(void);
+int file_delete(const char *p_filename);
 
-int file_info(void);
+int file_info(const char *p_filename);
 
 #endif // FILE_OPERATIONS_H

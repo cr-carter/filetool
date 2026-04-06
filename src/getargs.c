@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "include/common.h"
+
 /* File scope flags, all default to 0*/
 static int f_filename = 0;
 static int f_append = 0;
@@ -11,7 +13,7 @@ static int f_info = 0;
 static int f_delete = 0;
 static int f_help = 0;
 
-int getargs(int argc, char *argv[])
+int getargs(int argc, char *argv[], prog_args *arguments)
 {
     int opt;
 

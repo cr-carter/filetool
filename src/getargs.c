@@ -53,14 +53,6 @@ int getargs(int argc, char *argv[], prog_args *arguments)
         }
     }
 
-    printf("  filename: %s\n", arguments->filename);
-    printf("    append: %s\n", arguments->append);
-    printf("    search: %s\n", arguments->search);
-    printf("   replace: %s\n", arguments->replace);
-    printf("   is_info: %i\n", arguments->is_info);
-    printf(" is_delete: %i\n", arguments->is_delete);
-    printf("   is_help: %i\n", arguments->is_help);
-
     return func_retval;
 }
 

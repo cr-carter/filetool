@@ -1,0 +1,8 @@
+#Ignore any .o files created
+build/
+
+#Ignore the timestable binary file
+filetool
+
+#Ignore vscode files
+.vscode/

@@ -3,16 +3,54 @@
 #include <grp.h>
 #include <pwd.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "include/file_operations.h"
 
-int file_search(void)
+int file_search(const char *p_filename, const char *p_search)
 {
-    printf("Searched file\n");
-    return 0;
+    int func_retval = -1;
+    FILE *file_fp = fopen(p_filename, "r");
+
+    if (file_fp == NULL)
+    {
+        printf("Unable to search %s\n", p_filename);
+        goto exit_func;
+    }
+
+    char const *pos = 0;
+    int line = 1;
+    int byte_count = 0;
+    char file_str[255] = {0};
+
+    while (fgets(file_str, 255, file_fp))
+    {
+        pos = strstr(file_str, p_search);
+
+        if (pos)
+        {
+            byte_count += pos - file_str;
+            printf("Found string %s at position %td on line %i\n", p_search, pos - file_str, line);
+            func_retval = byte_count;
+            break;
+        }
+
+        byte_count += strlen(file_str);
+        line++;
+    }
+
+    if (!pos)
+    {
+        printf("\"%s\" not found in file %s\n", p_search, p_filename);
+    }
+
+    fclose(file_fp);
+
+exit_func:
+    return func_retval;
 }
 
 int file_replace(void)
@@ -21,9 +59,11 @@ int file_replace(void)
     return 0;
 }
 
-int file_append(void)
+int file_append(const char *p_filename, const char *p_append_str)
 {
-    printf("File appended\n");
+    FILE *file_fp = fopen(p_filename, "a");
+    fprintf(file_fp, "%s\n", p_append_str);
+    fclose(file_fp);
     return 0;
 }
 

@@ -63,18 +63,16 @@ int main(int argc, char *argv[])
 
     if (arguments.search)
     {
-        file_search();
-        if (arguments.replace)
+        int str_found = file_search(arguments.filename, arguments.search);
+        if (arguments.replace && str_found)
         {
-            // FILE *file_fp = fopen(arguments.filename, "w");
-            file_replace();
+            file_replace(arguments.filename, arguments.search, arguments.replace);
         }
     }
 
     if (arguments.append)
     {
-        // FILE *file_fp = fopen(arguments.filename, "a");
-        file_append();
+        file_append(arguments.filename, arguments.append);
     }
 
     if (arguments.is_delete)

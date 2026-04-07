@@ -1,3 +1,9 @@
+/*
+ * @file: file_operations.c
+ * @author: Chase Carter
+ * @brief: Defines functions used by filetool.c
+ */
+
 #define _POSIX_C_SOURCE 200809L // Needed for lstat
 
 #include <grp.h>    // get GID
@@ -10,10 +16,12 @@
 #include "include/file_operations.h"
 
 #define TEMP_FILENAME_LEN 50
+#define LINE_LEN 1024
+#define FILE_SIZE 4096
 
 int search_in_file(const char *p_filename, const char *p_pattern)
 {
-    int func_retval = -1;
+    int func_retval = EXIT_FAILURE;
     FILE *file_fp = fopen(p_filename, "r");
 
     if (file_fp == NULL)
@@ -25,10 +33,9 @@ int search_in_file(const char *p_filename, const char *p_pattern)
     char const *pos = 0; // position in line
     int line = 1;
     int byte_count = 0; // will return as int, location in file
-    char file_str[255] = {0};
+    char file_str[LINE_LEN] = {0};
 
-    // fgets alternative, dynamic memory
-    while (fgets(file_str, 255, file_fp))
+    while (fgets(file_str, LINE_LEN, file_fp))
     {
         pos = strstr(file_str, p_pattern);
 
@@ -50,6 +57,7 @@ int search_in_file(const char *p_filename, const char *p_pattern)
     }
 
     fclose(file_fp);
+    func_retval = EXIT_SUCCESS;
 
 exit_func:
     return func_retval;
@@ -57,7 +65,7 @@ exit_func:
 
 int replace_string_in_file(const char *p_filename, const char *p_pattern, int position, const char *p_replacement)
 {
-    int func_retval = -1;
+    int func_retval = EXIT_FAILURE;
     FILE *file_fp = fopen(p_filename, "r");
     if (file_fp == NULL)
     {
@@ -65,7 +73,7 @@ int replace_string_in_file(const char *p_filename, const char *p_pattern, int po
     }
 
     char temp_filename[TEMP_FILENAME_LEN] = {0};
-    sprintf(temp_filename, "temp%i%i.txt", rand(), rand());
+    sprintf(temp_filename, "/tmp/string_replace_%i.txt", rand());
 
     FILE *temp_fp = fopen(temp_filename, "w");
 
@@ -78,8 +86,7 @@ int replace_string_in_file(const char *p_filename, const char *p_pattern, int po
     // save from end of search pattern to send of file
     fseek(file_fp, position + strlen(p_pattern), SEEK_SET);
 
-    // dynamic memory
-    char rest_of_file[4096] = {0};
+    char rest_of_file[FILE_SIZE] = {0};
     fread(rest_of_file, sizeof(rest_of_file), sizeof(*rest_of_file), file_fp);
 
     fprintf(temp_fp, "%s%s", p_replacement, rest_of_file);
@@ -89,7 +96,7 @@ int replace_string_in_file(const char *p_filename, const char *p_pattern, int po
     remove(p_filename);
     rename(temp_filename, p_filename);
 
-    func_retval = 0;
+    func_retval = EXIT_SUCCESS;
 
 exit_func:
     return func_retval;
@@ -97,11 +104,11 @@ exit_func:
 
 int append_file(const char *p_filename, const char *p_append_str)
 {
-    int func_retval = 0;
+    int func_retval = EXIT_SUCCESS;
     FILE *file_fp = fopen(p_filename, "a");
     if (file_fp == NULL)
     {
-        func_retval = 1;
+        func_retval = EXIT_FAILURE;
         goto end_func;
     }
     fprintf(file_fp, "%s\n", p_append_str);
@@ -116,23 +123,23 @@ int delete_file(const char *p_filename)
     if (remove(p_filename) == 0)
     {
         printf("File %s deleted.\n", p_filename);
-        return 0;
+        return EXIT_SUCCESS;
     }
     else
     {
         fprintf(stderr, "Unable to delete %s\n", p_filename);
-        return 1;
+        return EXIT_FAILURE;
     }
 }
 
 int get_file_info(const char *p_filename)
 {
-    int func_retval = 0;
+    int func_retval = EXIT_SUCCESS;
     struct stat buffer = {0};
 
     if (lstat(p_filename, &buffer) == -1)
     {
-        func_retval = 1;
+        func_retval = EXIT_FAILURE;
         goto exit_func;
     }
 

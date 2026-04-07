@@ -1,3 +1,9 @@
+/*
+ * @file: common.h
+ * @author: Chase Carter
+ * @brief: Defines prog_args_t struct used throughout filetool program.
+ */
+
 #ifndef COMMON_H
 #define COMMON_H
 

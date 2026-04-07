@@ -1,3 +1,8 @@
+/*
+ * @file: filetool.c
+ * @author: Chase Carter
+ * @brief: Provides file utility tools such as getting file info and replacing text in a file.
+ */
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>

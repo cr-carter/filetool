@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
             retval = 1;
             goto exit_prog;
         }
-        }
+    }
 
     if (arguments.is_info)
     {

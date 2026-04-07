@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         int str_found = file_search(arguments.filename, arguments.search);
         if (arguments.replace && str_found)
         {
-            file_replace(arguments.filename, arguments.search, arguments.replace);
+            file_replace(arguments.filename, arguments.search, str_found, arguments.replace);
         }
     }
 

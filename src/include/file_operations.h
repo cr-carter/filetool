@@ -3,7 +3,7 @@
 
 int file_search(const char *p_filenamed, const char *p_search);
 
-int file_replace(const char *p_filename, const char *p_search, const char *p_replace);
+int file_replace(const char *p_filename, const char *p_search, int position, const char *p_replace);
 
 int file_append(const char *p_filename, const char *p_append_str);
 

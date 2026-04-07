@@ -53,10 +53,24 @@ exit_func:
     return func_retval;
 }
 
-int file_replace(void)
+int file_replace(const char *p_filename, const char *p_search, int position, const char *p_replace)
 {
-    printf("Replaced string\n");
-    return 0;
+    int func_retval = -1;
+    FILE *file_fp = fopen(p_filename, "r+");
+    if (file_fp == NULL)
+    {
+        goto exit_func;
+    }
+    fseek(file_fp, position + strlen(p_search), SEEK_SET);
+
+    char rest_of_file[4096] = {0};
+    fread(rest_of_file, sizeof(rest_of_file), sizeof(*rest_of_file), file_fp);
+
+    fseek(file_fp, position, SEEK_SET);
+    fprintf(file_fp, "%s%s", p_replace, rest_of_file);
+    fclose(file_fp);
+exit_func:
+    return func_retval;
 }
 
 int file_append(const char *p_filename, const char *p_append_str)

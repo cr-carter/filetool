@@ -1,14 +1,14 @@
 #ifndef FILE_OPERATIONS_H
 #define FILE_OPERATIONS_H
 
-int file_search(const char *p_filenamed, const char *p_search);
+int search_in_file(const char *p_filenamed, const char *p_pattern);
 
-int file_replace(const char *p_filename, const char *p_search, int position, const char *p_replace);
+int replace_string_in_file(const char *p_filename, const char *p_pattern, int position, const char *p_replacement);
 
-int file_append(const char *p_filename, const char *p_append_str);
+int append_file(const char *p_filename, const char *p_append_str);
 
-int file_delete(const char *p_filename);
+int delete_file(const char *p_filename);
 
-int file_info(const char *p_filename);
+int get_file_info(const char *p_filename);
 
 #endif // FILE_OPERATIONS_H

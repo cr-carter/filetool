@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
         goto exit_prog;
     }
 
+    // Check line length
     if (arguments.filename && !(arguments.append || arguments.search || arguments.is_delete || arguments.is_info))
     {
         fprintf(stderr, "Usage: %s [options]\n", argv[0]);
@@ -63,21 +64,21 @@ int main(int argc, char *argv[])
 
     if (arguments.search)
     {
-        int str_found = file_search(arguments.filename, arguments.search);
+        int str_found = search_in_file(arguments.filename, arguments.search);
         if (arguments.replace && str_found)
         {
-            file_replace(arguments.filename, arguments.search, str_found, arguments.replace);
+            replace_string_in_file(arguments.filename, arguments.search, str_found, arguments.replace);
         }
     }
 
     if (arguments.append)
     {
-        file_append(arguments.filename, arguments.append);
+        append_file(arguments.filename, arguments.append);
     }
 
     if (arguments.is_delete)
     {
-        int delete_failed = file_delete(arguments.filename);
+        int delete_failed = delete_file(arguments.filename);
         if (delete_failed)
         {
             retval = 1;
@@ -88,7 +89,7 @@ int main(int argc, char *argv[])
     if (arguments.is_info)
     {
 
-        file_info(arguments.filename);
+        get_file_info(arguments.filename);
     }
 
     if (arguments.is_help)

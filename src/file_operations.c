@@ -1,17 +1,17 @@
-#define _POSIX_C_SOURCE 200809L
+#define _POSIX_C_SOURCE 200809L // Needed for lstat
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <grp.h>    // get GID
+#include <pwd.h>    // get UID
+#include <stdio.h>  // FILE, sterror
+#include <stdlib.h> // rand
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include <sys/stat.h> // get_file_info
 
 #include "include/file_operations.h"
 
-int file_search(const char *p_filename, const char *p_search)
+#define TEMP_FILENAME_LEN 50
+
+int search_in_file(const char *p_filename, const char *p_pattern)
 {
     int func_retval = -1;
     FILE *file_fp = fopen(p_filename, "r");
@@ -22,19 +22,20 @@ int file_search(const char *p_filename, const char *p_search)
         goto exit_func;
     }
 
-    char const *pos = 0;
+    char const *pos = 0; // position in line
     int line = 1;
-    int byte_count = 0;
+    int byte_count = 0; // will return as int, location in file
     char file_str[255] = {0};
 
+    // fgets alternative, dynamic memory
     while (fgets(file_str, 255, file_fp))
     {
-        pos = strstr(file_str, p_search);
+        pos = strstr(file_str, p_pattern);
 
         if (pos)
         {
             byte_count += pos - file_str;
-            printf("Found string %s at position %td on line %i\n", p_search, pos - file_str, line);
+            printf("Found string %s at position %td on line %i\n", p_pattern, pos - file_str, line);
             func_retval = byte_count;
             break;
         }
@@ -45,7 +46,7 @@ int file_search(const char *p_filename, const char *p_search)
 
     if (!pos)
     {
-        printf("\"%s\" not found in file %s\n", p_search, p_filename);
+        printf("\"%s\" not found in file %s\n", p_pattern, p_filename);
     }
 
     fclose(file_fp);
@@ -54,32 +55,34 @@ exit_func:
     return func_retval;
 }
 
-int file_replace(const char *p_filename, const char *p_search, int position, const char *p_replace)
+int replace_string_in_file(const char *p_filename, const char *p_pattern, int position, const char *p_replacement)
 {
     int func_retval = -1;
-    FILE *file_fp = fopen(p_filename, "r+");
+    FILE *file_fp = fopen(p_filename, "r");
     if (file_fp == NULL)
     {
         goto exit_func;
     }
 
-    char temp_filename[50] = {0};
+    char temp_filename[TEMP_FILENAME_LEN] = {0};
     sprintf(temp_filename, "temp%i%i.txt", rand(), rand());
 
     FILE *temp_fp = fopen(temp_filename, "w");
 
+    // write from file_fp to temp_fp
     for (int i = 0; i < position; i++)
     {
         putc(fgetc(file_fp), temp_fp);
     }
 
-    fseek(file_fp, position + strlen(p_search), SEEK_SET);
+    // save from end of search pattern to send of file
+    fseek(file_fp, position + strlen(p_pattern), SEEK_SET);
 
+    // dynamic memory
     char rest_of_file[4096] = {0};
     fread(rest_of_file, sizeof(rest_of_file), sizeof(*rest_of_file), file_fp);
 
-    fseek(file_fp, position, SEEK_SET);
-    fprintf(temp_fp, "%s%s", p_replace, rest_of_file);
+    fprintf(temp_fp, "%s%s", p_replacement, rest_of_file);
 
     fclose(temp_fp);
     fclose(file_fp);
@@ -92,7 +95,7 @@ exit_func:
     return func_retval;
 }
 
-int file_append(const char *p_filename, const char *p_append_str)
+int append_file(const char *p_filename, const char *p_append_str)
 {
     int func_retval = 0;
     FILE *file_fp = fopen(p_filename, "a");
@@ -108,7 +111,7 @@ end_func:
     return func_retval;
 }
 
-int file_delete(const char *p_filename)
+int delete_file(const char *p_filename)
 {
     if (remove(p_filename) == 0)
     {
@@ -122,7 +125,7 @@ int file_delete(const char *p_filename)
     }
 }
 
-int file_info(const char *p_filename)
+int get_file_info(const char *p_filename)
 {
     int func_retval = 0;
     struct stat buffer = {0};

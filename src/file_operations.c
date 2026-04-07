@@ -3,6 +3,7 @@
 #include <grp.h>
 #include <pwd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -61,24 +62,50 @@ int file_replace(const char *p_filename, const char *p_search, int position, con
     {
         goto exit_func;
     }
+
+    char temp_filename[50] = {0};
+    sprintf(temp_filename, "temp%i%i.txt", rand(), rand());
+
+    FILE *temp_fp = fopen(temp_filename, "w");
+
+    for (int i = 0; i < position; i++)
+    {
+        putc(fgetc(file_fp), temp_fp);
+    }
+
     fseek(file_fp, position + strlen(p_search), SEEK_SET);
 
     char rest_of_file[4096] = {0};
     fread(rest_of_file, sizeof(rest_of_file), sizeof(*rest_of_file), file_fp);
 
     fseek(file_fp, position, SEEK_SET);
-    fprintf(file_fp, "%s%s", p_replace, rest_of_file);
+    fprintf(temp_fp, "%s%s", p_replace, rest_of_file);
+
+    fclose(temp_fp);
     fclose(file_fp);
+    remove(p_filename);
+    rename(temp_filename, p_filename);
+
+    func_retval = 0;
+
 exit_func:
     return func_retval;
 }
 
 int file_append(const char *p_filename, const char *p_append_str)
 {
+    int func_retval = 0;
     FILE *file_fp = fopen(p_filename, "a");
+    if (file_fp == NULL)
+    {
+        func_retval = 1;
+        goto end_func;
+    }
     fprintf(file_fp, "%s\n", p_append_str);
     fclose(file_fp);
-    return 0;
+
+end_func:
+    return func_retval;
 }
 
 int file_delete(const char *p_filename)
